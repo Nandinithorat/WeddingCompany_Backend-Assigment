@@ -1,0 +1,285 @@
+{
+  "info": {
+    "name": "Organization Management Service",
+    "description": "API collection for testing organization management endpoints",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000",
+      "type": "string"
+    },
+    {
+      "key": "access_token",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Root - API Info",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/",
+          "host": ["{{base_url}}"],
+          "path": [""]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "2. Create Organization",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "if (pm.response.code === 201) {",
+              "    var jsonData = pm.response.json();",
+              "    pm.environment.set(\"org_name\", \"TechCorp\");",
+              "    console.log(\"Organization created successfully\");",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"organization_name\": \"TechCorp\",\n  \"email\": \"admin@techcorp.com\",\n  \"password\": \"SecurePass123\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/org/create",
+          "host": ["{{base_url}}"],
+          "path": ["org", "create"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "3. Admin Login",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "if (pm.response.code === 200) {",
+              "    var jsonData = pm.response.json();",
+              "    pm.collectionVariables.set(\"access_token\", jsonData.access_token);",
+              "    console.log(\"Token saved: \" + jsonData.access_token);",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"admin@techcorp.com\",\n  \"password\": \"SecurePass123\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/admin/login",
+          "host": ["{{base_url}}"],
+          "path": ["admin", "login"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "4. Get Organization",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/org/get?organization_name=TechCorp",
+          "host": ["{{base_url}}"],
+          "path": ["org", "get"],
+          "query": [
+            {
+              "key": "organization_name",
+              "value": "TechCorp"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "5. Update Organization",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"organization_name\": \"TechCorp\",\n  \"new_organization_name\": \"TechCorp Updated\",\n  \"email\": \"newadmin@techcorp.com\",\n  \"password\": \"NewSecurePass123\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/org/update",
+          "host": ["{{base_url}}"],
+          "path": ["org", "update"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "6. Delete Organization (Authenticated)",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{access_token}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"organization_name\": \"TechCorp Updated\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/org/delete",
+          "host": ["{{base_url}}"],
+          "path": ["org", "delete"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Example: Create Second Organization",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"organization_name\": \"DevCompany\",\n  \"email\": \"admin@devcompany.com\",\n  \"password\": \"DevPass456\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/org/create",
+          "host": ["{{base_url}}"],
+          "path": ["org", "create"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Example: Login as Second Admin",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"admin@devcompany.com\",\n  \"password\": \"DevPass456\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/admin/login",
+          "host": ["{{base_url}}"],
+          "path": ["admin", "login"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Error Case: Create Duplicate Org",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"organization_name\": \"TechCorp\",\n  \"email\": \"another@techcorp.com\",\n  \"password\": \"Password123\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/org/create",
+          "host": ["{{base_url}}"],
+          "path": ["org", "create"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Error Case: Invalid Login",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"wrong@email.com\",\n  \"password\": \"wrongpass\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/admin/login",
+          "host": ["{{base_url}}"],
+          "path": ["admin", "login"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Error Case: Delete Without Auth",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"organization_name\": \"TechCorp\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/org/delete",
+          "host": ["{{base_url}}"],
+          "path": ["org", "delete"]
+        }
+      },
+      "response": []
+    }
+  ]
+}
